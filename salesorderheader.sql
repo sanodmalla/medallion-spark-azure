@@ -1,20 +1,19 @@
-{% snapshot salesorderheader_snapshot}
+{% snapshot salesorderheader_snapshot %}
 
 {{
     config(
-        file_format = "delta",
-        location_root = "/mnt/silver/address",
-        target_schema = 'snapshots',
-        invalidate_hard_deletes = TRUE,
-        unique_key = 'SalesOrderID',
-        strategy='check',
-        check_cols = 'all'
-        )
-
+      file_format = "delta",
+      location_root = "/mnt/silver/salesorderheader",
+      target_schema='snapshots',
+      invalidate_hard_deletes=True,
+      unique_key='SalesOrderID',
+      strategy='check',
+      check_cols='all'
+    )
 }}
 
-with source_data as (
-    select
+with salesorderheader_snapshot as (
+    SELECT
         SalesOrderID,
         RevisionNumber,
         OrderDate,
@@ -23,6 +22,7 @@ with source_data as (
         Status,
         OnlineOrderFlag,
         SalesOrderNumber,
+        PurchaseOrderNumber,
         AccountNumber,
         CustomerID,
         ShipToAddressID,
@@ -34,9 +34,9 @@ with source_data as (
         Freight,
         TotalDue,
         Comment
-    from {{source('saleslt', 'salesorderheader')}}
+    FROM {{ source('saleslt', 'salesorderheader') }}
 )
-select *
-from source_data
+
+select * from salesorderheader_snapshot
 
 {% endsnapshot %}

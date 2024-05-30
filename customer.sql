@@ -1,21 +1,21 @@
-{% snapshot customer_snapshot}
+{% snapshot customer_snapshot %}
 
 {{
     config(
-        file_format = "delta",
-        location_root = "/mnt/silver/address",
-        target_schema = 'snapshots',
-        invalidate_hard_deletes = TRUE,
-        unique_key = 'CustomerID',
-        strategy='check',
-        check_cols = 'all'
-        )
+      file_format = "delta",
+      location_root = "/mnt/silver/customer",
 
+      target_schema='snapshots',
+      invalidate_hard_deletes=True,
+      unique_key='CustomerId',
+      strategy='check',
+      check_cols='all'
+    )
 }}
 
 with source_data as (
     select
-        CustomerID,
+        CustomerId,
         NameStyle,
         Title,
         FirstName,
@@ -28,7 +28,7 @@ with source_data as (
         Phone,
         PasswordHash,
         PasswordSalt
-    from {{source('saleslt', 'customer')}}
+    from {{ source('saleslt', 'customer') }}
 )
 select *
 from source_data

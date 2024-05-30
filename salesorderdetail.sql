@@ -1,30 +1,29 @@
-{% snapshot salesorderdetail_snapshot}
+{% snapshot salesorderdetail_snapshot %}
 
 {{
     config(
-        file_format = "delta",
-        location_root = "/mnt/silver/address",
-        target_schema = 'snapshots',
-        invalidate_hard_deletes = TRUE,
-        unique_key = 'SalesOrderDetailID',
-        strategy='check',
-        check_cols = 'all'
-        )
-
+      file_format = "delta",
+      location_root = "/mnt/silver/salesorderdetail",
+      target_schema='snapshots',
+      invalidate_hard_deletes=True,
+      unique_key='SalesOrderDetailID',
+      strategy='check',
+      check_cols='all'
+    )
 }}
 
-with source_data as (
-    select
+with salesorderdetail_snapshot as (
+    SELECT
         SalesOrderID,
         SalesOrderDetailID,
         OrderQty,
         ProductID,
         UnitPrice,
         UnitPriceDiscount,
-        LineTotal,
-    from {{source('saleslt', 'salesorderdetail')}}
+        LineTotal
+    FROM {{ source('saleslt', 'salesorderdetail') }}
 )
-select *
-from source_data
+
+select * from salesorderdetail_snapshot
 
 {% endsnapshot %}

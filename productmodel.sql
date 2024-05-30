@@ -1,26 +1,26 @@
-{% snapshot productmodel_snapshot}
+
+{% snapshot productmodel_snapshot %}
 
 {{
     config(
-        file_format = "delta",
-        location_root = "/mnt/silver/address",
-        target_schema = 'snapshots',
-        invalidate_hard_deletes = TRUE,
-        unique_key = 'ProductModelID',
-        strategy='check',
-        check_cols = 'all'
-        )
-
+      file_format = "delta",
+      location_root = "/mnt/silver/productmodel",
+      target_schema='snapshots',
+      invalidate_hard_deletes=True,
+      unique_key='ProductModelID',
+      strategy='check',
+      check_cols='all'
+    )
 }}
 
-with source_data as (
-    select
+with product_snapshot as (
+    SELECT
         ProductModelID,
         Name,
         CatalogDescription
-    from {{source('saleslt', 'productmodel')}}
+    FROM {{ source('saleslt', 'productmodel') }}
 )
-select *
-from source_data
+
+select * from product_snapshot
 
 {% endsnapshot %}
